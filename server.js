@@ -18,14 +18,15 @@ app.use((req, res, next) => {
     next();
 });
 
-// 2. Map Scramjet Core Files straight out of node_modules
+// 1. Map Scramjet Core Files (Make sure this says /scramjet/)
 app.use('/scramjet/', express.static(scramjetPath));
 
-// 3. Map Bare-Mux distribution assets dynamically
+// 2. Map Bare-Mux and Epoxy distribution assets
 app.use('/baremux/', express.static(path.join(__dirname, 'node_modules/@mercuryworkshop/bare-mux/dist')));
-
-// 4. Map Epoxy-Transport distribution assets dynamically
 app.use('/epoxy/', express.static(path.join(__dirname, 'node_modules/@mercuryworkshop/epoxy-transport/dist')));
+
+// 3. Serve your main frontend pages from the 'client' folder
+app.use(express.static(path.join(__dirname, 'client')));
 
 // 5. Serve your main frontend pages from the 'client' folder
 app.use(express.static(path.join(__dirname, 'client')));

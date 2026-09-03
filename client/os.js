@@ -377,25 +377,27 @@ function setupBrowser() {
   const homeBtn = document.getElementById("browser-home");
   const urlInput = document.getElementById("browser-url");
   const frame = document.getElementById("browser-frame");
+  let scramjetFrame;
   let loadedOnce = false;
 
-  function navigate(rawUrl) {
+  async function navigate(rawUrl) {
     let val = (rawUrl !== undefined ? rawUrl : urlInput.value).trim();
     if (!val) return;
 
-    // 1. Format plain text into a DuckDuckGo search or add https://
     if (!val.includes('.') || val.includes(' ')) {
       val = 'https://duckduckgo.com/?q=' + encodeURIComponent(val);
     } else if (!/^https?:\/\//i.test(val)) {
       val = 'https://' + val;
     }
 
-    // 2. Break out of the workspace container frame to launch a clean tab window
-    if (typeof window.__scramjet$config !== 'undefined') {
-      const proxyUrl = window.__scramjet$config.prefix + window.__scramjet$config.encodeUrl(val);
-      window.open(proxyUrl, '_blank');
-    } else {
-      window.open(val, '_blank');
+    try {
+      const controller = await window.scramjetReady;
+      if (!scramjetFrame) scramjetFrame = controller.createFrame(frame);
+      scramjetFrame.go(val);
+      urlInput.value = val;
+    } catch (err) {
+      formMessage.textContent = "The browser proxy could not start.";
+      console.error("Browser navigation failed:", err);
     }
   }
 

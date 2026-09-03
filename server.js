@@ -28,6 +28,10 @@ app.use('/epoxy/', express.static(path.join(__dirname, 'node_modules/@mercurywor
 // 3. Serve your main frontend pages from the 'client' folder
 app.use(express.static(path.join(__dirname, 'client')));
 
+app.get('/sw.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'sw.js'));
+});
+
 // 5. Serve your main frontend pages from the 'client' folder
 app.use(express.static(path.join(__dirname, 'client')));
 

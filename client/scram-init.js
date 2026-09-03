@@ -1,4 +1,4 @@
-import "/baremux/index.js";
+import { BareMuxConnection } from "/baremux/index.mjs";
 
 const { ScramjetController } = $scramjetLoadController();
 
@@ -7,12 +7,12 @@ window.scramjetReady = initializeProxy();
 async function initializeProxy() {
     if ('serviceWorker' in navigator) {
         try {
-            const registration = await navigator.serviceWorker.register('/sw.js', {
+            await navigator.serviceWorker.register('/sw.js', {
                 scope: '/scramjet/'
             });
             await navigator.serviceWorker.ready;
 
-            const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+            const connection = new BareMuxConnection("/baremux/worker.js");
             const wispUrl = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/wisp/';
             await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
 

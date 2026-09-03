@@ -16,7 +16,14 @@ async function initializeProxy() {
             const wispUrl = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/wisp/';
             await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
 
-            const controller = new ScramjetController({ prefix: "/scramjet/" });
+            const controller = new ScramjetController({
+                prefix: "/scramjet/",
+                files: {
+                    wasm: "/scramjet/scramjet.wasm.wasm",
+                    all: "/scramjet/scramjet.all.js",
+                    sync: "/scramjet/scramjet.sync.js"
+                }
+            });
             await controller.init();
             window.scramjet = controller;
             return controller;

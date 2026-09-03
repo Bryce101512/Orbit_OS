@@ -3,7 +3,7 @@ import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { scramjetPath } from '@mercuryworkshop/scramjet/path';
-import { server as wisp } from '@mercuryworkshop/wisp-js/server'; 
+import { server as wisp } from '@mercuryworkshop/wisp-js/server';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,19 +32,20 @@ app.get('/sw.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'sw.js'));
 });
 
-// 5. Serve your main frontend pages from the 'client' folder
-app.use(express.static(path.join(__dirname, 'client')));
+app.get('/health', (req, res) => {
+    res.type('text/plain').send('ok');
+});
 
-// 6. Handle Wisp protocol socket upgrades for the network backend
+// Handle Wisp protocol socket upgrades for the network backend.
 server.on('upgrade', (req, socket, head) => {
     if (req.url.startsWith('/wisp/')) {
-        wisp.route(req, socket, head);
+        wisp.routeRequest(req, socket, head);
     } else {
         socket.end();
     }
 });
 
-// 7. Initialize server listener
+// Initialize server listener.
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
     console.log(`Server successfully executing at http://localhost:${PORT}`);
